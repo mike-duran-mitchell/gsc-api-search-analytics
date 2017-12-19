@@ -7,7 +7,7 @@ A Google Search Console API NodeJS script that downloads keywords from all searc
 Google Search Console API is lacking documentation or examples for NodeJS. This is a basic NodeJS implementation of accessing the Google Search Console API, downloading a list of all sites within a single account, and then saving keywords from the last 90 days as CSV files using JWT Authentication from the [Google Drive API Quickstart documents](https://developers.google.com/drive/v3/web/quickstart/nodejs). 
 
 ## Step 1: Turn on the GSC API
-1. Use [this wizard](https://console.developers.google.com/start/api?id=webmasters] to create or select a project in the Google Developers Console and automatically turn on the API. Click Continue, then Go to credentials.
+1. Use [this wizard](https://console.developers.google.com/start/api?id=webmasters) to create or select a project in the Google Developers Console and automatically turn on the API. Click Continue, then Go to credentials.
 2. On the Add credentials to your project page, click the Cancel button.
 3. At the top of the page, select the OAuth consent screen tab. Select an Email address, enter a Product name if not already set, and click the Save button.
 4. Select the Credentials tab, click the Create credentials button and select OAuth client ID.
