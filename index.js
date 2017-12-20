@@ -51,7 +51,6 @@ const argv = require('yargs').options({
   }
 }).argv;
 
-console.log(argv.startDate, argv.endDate);
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/gsc-credentials.json
 const SCOPES = ['https://www.googleapis.com/auth/webmasters.readonly'];
@@ -189,7 +188,14 @@ function getDocs(auth) {
       let timeOut = index * 500;
       let filename = site.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, ''); // replace protocol and trailing slash
       filename =
-        argv.startDate + ' to ' + argv.endDate + ' - ' + filename + '.csv';
+        argv.startDate +
+        ' to ' +
+        argv.endDate +
+        ' - ' +
+        filename +
+        ' - ' +
+        argv.searchType +
+        '.csv';
 
       setTimeout(function() {
         let jsonArr = [];
