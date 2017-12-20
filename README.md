@@ -52,10 +52,11 @@ For subsequent keyword downloads, running `node index.js` is all you have to do.
 
 ## Future Updates
 
-- Add a proper throttle. Current time to download 1k properties is ~8.5 minutes. With proper throttle this should be ~5 minutes.
-- Add the ability to remove erroneous or deprecated URLs that have an undefined key (i.e. tracking http://example.com and http://www.example.com but http://www.example.com was never used)
-- Add in the ability to take custom argv options 
-⋅⋅* startDate
-⋅⋅* endDate
-⋅⋅* rowLimit
-⋅⋅* dimensions
+1. In Progress: Add a proper throttle. Current time to download 1k properties is ~8.5 minutes. With proper throttle this should be ~5 minutes. Currently have `limiter` added with a few lines of code for rate limiting that are currently unused. This should be updated soon.
+2. Add the ability to remove erroneous or deprecated URLs that have an undefined key (i.e. tracking http://example.com and http://www.example.com but http://www.example.com was never used)
+3. In Progress: Add in the ability to take other custom argv options 
+⋅⋅* `dimensions`
+⋅⋅* `dimensionFilterGroups` 
+⋅⋅* `dimensionFilterGroups.groupType`
+⋅⋅* `dimensionFilterGroups.filters.dimension` --> `device` ('mobile','desktop','tablet') && `page` && `country` && `query` && `searchAppearance`
+⋅⋅* `startRow`
