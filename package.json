@@ -1,7 +1,7 @@
 {
   "name": "mike-duran-mitchell-gsc-api",
-  "version": "0.0.1",
-  "description": "Google Search Console API script to download keywords from search console",
+  "version": "0.0.2",
+  "description": "Google Search Console API script to download keywords from all properties in search console",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

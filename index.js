@@ -185,7 +185,8 @@ function getDocs(auth) {
     }
 
     sitesArr.forEach(function(site, index) {
-      let timeOut = index * 500;
+      const limiter = sitesArr.length > 200 ? minuteLimiter : secondLimiter;
+
       let filename = site.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, ''); // replace protocol and trailing slash
       filename =
         argv.startDate +
@@ -197,7 +198,7 @@ function getDocs(auth) {
         argv.searchType +
         '.csv';
 
-      setTimeout(function() {
+      limiter.removeTokens(1, function() {
         let jsonArr = [];
         let errArr = [];
         let urlEncodedSite = encodeURIComponent(site);
@@ -291,7 +292,7 @@ function getDocs(auth) {
             }
           }
         );
-      }, timeOut);
+      });
     });
   };
 }
