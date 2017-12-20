@@ -1,4 +1,4 @@
-# Google Search Console API Keyword Download for SEOs
+# Google Search Console API -- Keywords on All Sites
 
 A Google Search Console API NodeJS script that downloads keywords from all search console properties
 
