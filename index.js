@@ -4,8 +4,54 @@ const google = require('googleapis');
 const googleAuth = require('google-auth-library');
 const json2csv = require('json2csv');
 const moment = require('moment');
+const RateLimiter = require('limiter').RateLimiter;
 
+const minuteLimiter = new RateLimiter(200, 'minute');
+const secondLimiter = new RateLimiter(5, 'second');
 
+let defaultEndDate = moment()
+  .subtract(2, 'd')
+  .format('YYYY-MM-DD');
+let defaultStartDate = moment()
+  .subtract(92, 'd')
+  .format('YYYY-MM-DD');
+
+const argv = require('yargs').options({
+  startDate: {
+    alias: 'sd',
+    demandOption: false,
+    describe:
+      'The start date for downloading keywords. Must be formatted YYYY-MM-DD. The default is `${defaultStartDate}` ',
+    type: 'string',
+    default: defaultStartDate
+  },
+  endDate: {
+    alias: 'ed',
+    demandOption: false,
+    describe:
+      'The end date for downloading keywords. Must be formatted YYYY-MM-DD. The default is `${defaultEndDate}`',
+    type: 'string',
+    default: defaultEndDate
+  },
+  rowLimit: {
+    alias: 'rl',
+    demandOption: false,
+    describe:
+      'The number of keywords downloaded. Can range from 1-5000. Default is 5000.',
+    type: 'number',
+    default: 5000
+  },
+  searchType: {
+    alias: 'st',
+    demandOption: false,
+    describe:
+      'The type of search. Can be "image" or "video". Defaults to "web".',
+    default: 'web',
+    choices: ['image', 'web', 'video']
+  }
+}).argv;
+
+console.log(argv.startDate, argv.endDate);
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/gsc-credentials.json
 const SCOPES = ['https://www.googleapis.com/auth/webmasters.readonly'];
@@ -128,14 +174,11 @@ function getDocs(auth) {
   );
 
   let analyticsQuery = function(sitesArr) {
-    let endDate = moment()
-      .subtract(2, 'd')
-      .format('YYYY-MM-DD');
-    let startDate = moment()
-      .subtract(92, 'd')
-      .format('YYYY-MM-DD');
     console.log(
-      'This will download keywords from ' + startDate + ' to ' + endDate
+      'This will download keywords from ' +
+        argv.startDate +
+        ' to ' +
+        argv.endDate
     );
 
     if (!fs.existsSync('saves')) {
@@ -145,7 +188,8 @@ function getDocs(auth) {
     sitesArr.forEach(function(site, index) {
       let timeOut = index * 500;
       let filename = site.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, ''); // replace protocol and trailing slash
-      filename = startDate + ' to ' + endDate + ' - ' + filename + '.csv';
+      filename =
+        argv.startDate + ' to ' + argv.endDate + ' - ' + filename + '.csv';
 
       setTimeout(function() {
         let jsonArr = [];
@@ -157,10 +201,11 @@ function getDocs(auth) {
             auth: auth,
             siteUrl: urlEncodedSite, // required - this is the site
             resource: {
-              startDate: startDate,
-              endDate: endDate,
+              startDate: argv.startDate,
+              endDate: argv.endDate,
               dimensions: ['query'],
-              rowLimit: 5000
+              searchType: argv.searchType,
+              rowLimit: argv.rowLimit
             }
           },
           function(err, response) {
@@ -186,8 +231,8 @@ function getDocs(auth) {
                 );
                 errArr.push({
                   undefinedKey: site,
-                  startDate: startDate,
-                  endDate: endDate
+                  startDate: argv.startDate,
+                  endDate: argv.endDate
                 });
                 fs.writeFile(
                   './saves/error_log.txt',
@@ -214,8 +259,8 @@ function getDocs(auth) {
                     impressions: values.impressions,
                     ctr: values.ctr,
                     position: values.position,
-                    startDate: startDate,
-                    endDate: endDate
+                    startDate: argv.startDate,
+                    endDate: argv.endDate
                   });
                 }
 

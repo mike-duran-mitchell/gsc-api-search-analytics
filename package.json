@@ -31,6 +31,8 @@
     "google-auth-library": "^0.12.0",
     "googleapis": "^23.0.0",
     "json2csv": "^3.11.5",
-    "moment": "^2.20.1"
+    "limiter": "^1.1.2",
+    "moment": "^2.20.1",
+    "yargs": "^10.0.3"
   }
 }
