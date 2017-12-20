@@ -1,4 +1,4 @@
-# Google Search Console API Keyword Download for SEOs
+# Google Search Console API -- Keywords on All Sites
 
 A Google Search Console API NodeJS script that downloads keywords from all search console properties
 
@@ -37,19 +37,31 @@ For subsequent keyword downloads, running `node index.js` is all you have to do.
 - Fetches 5k keywords (max)
 - Fetches all data for each keyword (Clicks, CTR, Impressions, Position) 
 - Each property is saved as a unique CSV
-⋅⋅* Will not overwrite CSVs that have the same title. 
-⋅⋅* Saved title is `startDate to endDate - properturl.csv` (for example `2017-09-17 to 2017-12-16 - www.google.com.csv`).
+  - Will not overwrite CSVs that have the same title. 
+  - Saved title is `startDate to endDate - properturl.csv` (for example `2017-09-17 to 2017-12-16 - www.google.com.csv`).
 - Uses a setTimeout function with a rate limit of 500 seconds instead of a proper throttle at 5 per second or 200 per minute. 
-⋅⋅* This should work on most connections, but there is a possibility for rate limit errors on an intermittent connection (i.e. if you're on a plane).
+  - This should work on most connections, but there is a possibility for rate limit errors on an intermittent connection (i.e. if you're on a plane).
+- Has argv options
+  - `--startDate` --> The start date for downloading keywords. Must be formatted YYYY-MM-DD. The default is 2 days ago.
+  - `--endDate` --> The end date for downloading keywords. Must be formatted YYYY-MM-DD. The default is 92 days ago.
+  - `--rowLimit` --> The number of keywords downloaded. Can range from 1-5000. Default is 5000.
+  - `--searchType` --> The type of search. Can be "image" or "video". Defaults to "web".
+
 
 **If you are like many SEOs and have multiple accounts for GSC. To use a different account, you must delete your previously saved credentials at ~/.credentials/gsc-credentials.json**
 
 ## Future Updates
 
-- Add a proper throttle. Current time to download 1k properties is ~8.5 minutes. With proper throttle this should be ~5 minutes.
-- Add the ability to remove erroneous or deprecated URLs that have an undefined key (i.e. tracking http://example.com and http://www.example.com but http://www.example.com was never used)
-- Add in the ability to take custom argv options 
-⋅⋅* startDate
-⋅⋅* endDate
-⋅⋅* rowLimit
-⋅⋅* dimensions
+1. In Progress: Add a proper throttle. Current time to download 1k properties is ~8.5 minutes. With proper throttle this should be ~5 minutes. Currently have `limiter` added with a few lines of code for rate limiting that are currently unused. This should be updated soon.
+2. Add the ability to remove erroneous or deprecated URLs that have an undefined key (i.e. tracking http://example.com and http://www.example.com but http://www.example.com was never used)
+3. In Progress: Add in the ability to take other custom argv options 
+  - `dimensions`
+  - `dimensionFilterGroups` 
+  - `dimensionFilterGroups.groupType`
+  - `dimensionFilterGroups.filters.dimension`
+    - `device` ('mobile','desktop','tablet') 
+    - `page`
+    - `country` 
+    - `query` 
+    - `searchAppearance`
+  - `startRow`
