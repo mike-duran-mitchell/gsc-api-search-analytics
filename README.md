@@ -41,6 +41,12 @@ For subsequent keyword downloads, running `node index.js` is all you have to do.
 ⋅⋅* Saved title is `startDate to endDate - properturl.csv` (for example `2017-09-17 to 2017-12-16 - www.google.com.csv`).
 - Uses a setTimeout function with a rate limit of 500 seconds instead of a proper throttle at 5 per second or 200 per minute. 
 ⋅⋅* This should work on most connections, but there is a possibility for rate limit errors on an intermittent connection (i.e. if you're on a plane).
+- Has argv options
+⋅⋅* `--startDate` --> The start date for downloading keywords. Must be formatted YYYY-MM-DD. The default is 2 days ago.
+⋅⋅* `--endDate` --> The end date for downloading keywords. Must be formatted YYYY-MM-DD. The default is 92 days ago.
+⋅⋅* `--rowLimit` --> The number of keywords downloaded. Can range from 1-5000. Default is 5000.
+⋅⋅* `--searchType` --> The type of search. Can be "image" or "video". Defaults to "web".
+
 
 **If you are like many SEOs and have multiple accounts for GSC. To use a different account, you must delete your previously saved credentials at ~/.credentials/gsc-credentials.json**
 
