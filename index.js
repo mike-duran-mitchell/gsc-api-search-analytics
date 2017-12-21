@@ -9,10 +9,34 @@ const RateLimiter = require('limiter').RateLimiter;
 const minuteLimiter = new RateLimiter(200, 'minute');
 const secondLimiter = new RateLimiter(5, 'second');
 
-let defaultEndDate = moment()
+// {
+//   "dimensions": [
+//    "page",
+//    "query"
+//   ],
+//   "rowLimit": 5000,
+//   "startDate": "2017-09-10",
+//   "endDate": "2017-12-19",
+//   "dimensionFilterGroups": [
+//    {
+//     "filters": [
+//      {
+//       "dimension": "searchAppearance",
+//       "expression": "RICHCARD",
+//       "operator": "contains"
+//      }
+//     ]
+//    }
+//   ]
+//   }
+  
+
+
+
+const defaultEndDate = moment()
   .subtract(2, 'd')
   .format('YYYY-MM-DD');
-let defaultStartDate = moment()
+const defaultStartDate = moment()
   .subtract(92, 'd')
   .format('YYYY-MM-DD');
 
@@ -201,7 +225,7 @@ function getDocs(auth) {
       limiter.removeTokens(1, function() {
         let jsonArr = [];
         let errArr = [];
-        let urlEncodedSite = encodeURIComponent(site);
+        const urlEncodedSite = encodeURIComponent(site);
         webmasters.searchanalytics.query(
           {
             // get search analytics info
@@ -210,9 +234,10 @@ function getDocs(auth) {
             resource: {
               startDate: argv.startDate,
               endDate: argv.endDate,
-              dimensions: ['query'],
+              dimensions: ['query','page'],
               searchType: argv.searchType,
-              rowLimit: argv.rowLimit
+              rowLimit: argv.rowLimit,
+              aggregationType: "byPage"
             }
           },
           function(err, response) {
@@ -220,8 +245,9 @@ function getDocs(auth) {
               console.log('The API returned an error: ' + err);
               return;
             } else {
+              console.log(JSON.stringify(response))
               let fields = [
-                'site',
+                'URL',
                 'keys',
                 'clicks',
                 'impressions',
@@ -260,7 +286,7 @@ function getDocs(auth) {
                   let values = key[i];
 
                   jsonArr.push({
-                    site: site,
+                    URL: values.keys[1],
                     keys: values.keys[0],
                     clicks: values.clicks,
                     impressions: values.impressions,
