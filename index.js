@@ -2,12 +2,13 @@ const fs = require('fs');
 const readline = require('readline');
 const google = require('googleapis');
 const googleAuth = require('google-auth-library');
-const json2csv = require('json2csv');
 const moment = require('moment');
 const RateLimiter = require('limiter').RateLimiter;
 
 const minuteLimiter = new RateLimiter(200, 'minute');
 const secondLimiter = new RateLimiter(5, 'second');
+
+ 
 
 // {
 //   "dimensions": [
@@ -72,6 +73,13 @@ const argv = require('yargs').options({
       'The type of search. Can be "image" or "video". Defaults to "web".',
     default: 'web',
     choices: ['image', 'web', 'video']
+  },
+  dimensions: {
+    alias: 'd',
+    demandOption: false,
+    describe: 'The dimensions you want to include. Default is page and query. Other acceptable values are country, device, and searchAppearance. If you select searchAppearance it will be used as a dimension filter group for page and query.',
+    default: ['page','query'],
+    choices: ['page','query','country','device','searchAppearance']
   }
 }).argv;
 
@@ -186,17 +194,17 @@ function getDocs(auth) {
         console.log('The API returned an error: ' + err);
         return;
       }
-      let urlList = response.siteEntry;
+      const urlList = response.siteEntry;
       if (urlList.length === 0) {
         console.log('No URLs found.');
       } else {
         const sites = urlList.map(f => f.siteUrl);
-        analyticsQuery(sites);
+        searchAnalyticsQuery(sites);
       }
     }
   );
 
-  let analyticsQuery = function(sitesArr) {
+  const searchAnalyticsQuery = function(sitesArr) {
     console.log(
       'This will download keywords from ' +
         argv.startDate +
@@ -223,100 +231,38 @@ function getDocs(auth) {
         '.csv';
 
       limiter.removeTokens(1, function() {
-        let jsonArr = [];
-        let errArr = [];
-        const urlEncodedSite = encodeURIComponent(site);
-        webmasters.searchanalytics.query(
-          {
-            // get search analytics info
-            auth: auth,
-            siteUrl: urlEncodedSite, // required - this is the site
-            resource: {
-              startDate: argv.startDate,
-              endDate: argv.endDate,
-              dimensions: ['query','page'],
-              searchType: argv.searchType,
-              rowLimit: argv.rowLimit,
-              aggregationType: "byPage"
-            }
-          },
+        const sitUrlEncoded = encodeURIComponent(site);
+
+        const query = {
+          auth: auth,
+          siteUrl: sitUrlEncoded,
+          resource: {
+            startDate: argv.startDate,
+            endDate: argv.endDate,
+            dimensions: argv.dimensions,
+            searchType: argv.searchType,
+            rowLimit: argv.rowLimit,
+            aggregationType: "byPage"
+          }
+        }
+        webmasters.searchanalytics.query(query,
           function(err, response) {
             if (err) {
               console.log('The API returned an error: ' + err);
               return;
             } else {
               console.log(JSON.stringify(response))
-              let fields = [
-                'URL',
-                'keys',
-                'clicks',
-                'impressions',
-                'ctr',
-                'position',
-                'startDate',
-                'endDate'
-              ];
-
-              let key = response.rows;
-              if (key === undefined) {
+              let rows = response.rows;
+              console.log(rows);
+              if (rows === undefined) {
                 console.log(
-                  'Undefined key for: ' + site + '. Consider removing from GSC.'
-                );
-                errArr.push({
-                  undefinedKey: site,
-                  startDate: argv.startDate,
-                  endDate: argv.endDate
-                });
-                fs.writeFile(
-                  './saves/error_log.txt',
-                  'Undefined key for site: ' +
-                    errArr[0].undefinedKey +
-                    ' | Consider removing from GSC. \r\n',
-                  { flag: 'a+' },
-                  function(err) {
-                    if (err) {
-                      console.log('Error not logged for', site, ': ', err);
-                    } else {
-                      console.log('Error Logged for ', site);
-                    }
-                  }
+                  `this rows is undefined for ${site}`
                 );
               } else {
-                for (let i = 0, l = key.length; i < l; i++) {
-                  let values = key[i];
-
-                  jsonArr.push({
-                    URL: values.keys[1],
-                    keys: values.keys[0],
-                    clicks: values.clicks,
-                    impressions: values.impressions,
-                    ctr: values.ctr,
-                    position: values.position,
-                    startDate: argv.startDate,
-                    endDate: argv.endDate
-                  });
+                // console.log(`Keys: ${JSON.stringify(rows).length}`)
                 }
-
-                let result = json2csv({
-                  data: jsonArr,
-                  fields: fields
-                });
-
-                fs.writeFile(
-                  './saves/' + filename,
-                  result,
-                  { flag: 'wx' },
-                  function(err) {
-                    if (err) {
-                      console.log('File not saved: ', err);
-                    } else {
-                      console.log('File saved: ' + filename + '');
-                    }
-                  }
-                );
               }
             }
-          }
         );
       });
     });

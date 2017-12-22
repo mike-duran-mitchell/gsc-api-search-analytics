@@ -1,10 +1,12 @@
 {
   "name": "mike-duran-mitchell-gsc-api",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "Google Search Console API script to download keywords from all properties in search console",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "flow": "flow",
+    "flow:check": "flow check ./"
   },
   "repository": {
     "type": "git",
@@ -27,12 +29,13 @@
   },
   "homepage": "https://github.com/duranmitchell/google-search-console-api-for-seos#readme",
   "dependencies": {
-    "function-rate-limit": "^1.1.0",
     "google-auth-library": "^0.12.0",
     "googleapis": "^23.0.0",
-    "json2csv": "^3.11.5",
     "limiter": "^1.1.2",
     "moment": "^2.20.1",
     "yargs": "^10.0.3"
+  },
+  "devDependencies": {
+    "flow-bin": "^0.61.0"
   }
 }
