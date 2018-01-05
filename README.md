@@ -1,10 +1,10 @@
-# Google Search Console API Wrapper
+# Google Search Console API Keyword Downloader
 
 A Google Search Console API NodeJS script that downloads keywords from all search console properties
 
 ## Quick Overview
 
-Google Search Console API is lacking documentation or examples for NodeJS. This is a basic NodeJS implementation that wraps the Google Search Console API and illustrates how to access it in JS. The script downloads a list of all sites within a single account, and then saves keywords from the last 90 days as CSV files using JWT Authentication from the [Google Drive API Quickstart documents](https://developers.google.com/drive/v3/web/quickstart/nodejs). 
+Google Search Console API is lacking documentation or examples for NodeJS. This is a basic NodeJS implementation that illustrates how to access the Google Search Console API from NodeJS using JWT Authentication as described in the [Google Drive API Quickstart documents](https://developers.google.com/drive/v3/web/quickstart/nodejs). The script downloads a list of all sites within a single account, and then saves keywords from the last 90 days as CSV files.
 
 ## Step 1: Turn on the GSC API
 1. Use [this wizard](https://console.developers.google.com/start/api?id=webmasters) to create or select a project in the Google Developers Console and automatically turn on the API. Click Continue, then Go to credentials.
