@@ -29,9 +29,9 @@ Authorize this app by visiting this url:  https://accounts.google.com/o/oauth2/a
 6. login
 7. Paste code in from Google. It will look something like `7Annnjy_RmTffaE//ERkp-0RygRsgavEDAnaeErTewqQ_za2143DFBnaw`
 8. Any time you want to run the code you just run `node index.js` from the command line. 
-9. Note: To switch accounts you must delete your previously saved credentials at `~/.credentials/gsc-credentials.json`
+9. **Note: To switch accounts you must delete your previously saved credentials at `~/.credentials/gsc-credentials.json` and update `./client_secret.json` with the appropriate API credentials**
 8. Files currently save 90 days of data automatically in `./saves`
-9.. Set up a cron job if you are looking to have this done automatically
+9. Set up a cron job if you are looking to have this done automatically
 
 For subsequent keyword downloads, running `node index.js` is all you have to do.
 
@@ -55,7 +55,7 @@ For subsequent keyword downloads, running `node index.js` is all you have to do.
   - `--searchType` or `-t` --> The type of search. Can be "image" or "video". Defaults to "web".
   - `--dimensions` or `-d` --> The dimensions you want to include. Default is page and query.
 
-**If you are like many SEOs and have multiple accounts for GSC. To use a different account, you must delete your previously saved credentials at ~/.credentials/gsc-credentials.json**
+**Again, please note, if you are like many SEOs and have multiple accounts for GSC, that to use a different account you must delete your previously saved credentials at `~/.credentials/gsc-credentials.json` and update `./client_secret.json` with the appropriate API credentials**
 
 ## Future Updates
 
