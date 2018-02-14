@@ -4,9 +4,10 @@ const google = require("googleapis");
 const googleAuth = require("google-auth-library");
 const moment = require("moment");
 const RateLimiter = require("limiter").RateLimiter;
+const json2csv = require("json2csv");
 
-const minuteLimiter = new RateLimiter(200, "minute");
-const secondLimiter = new RateLimiter(5, "second");
+const minuteLimiter = new RateLimiter(1, 350);
+const secondLimiter = new RateLimiter(1, 200);
 
 const defaultEndDate = moment()
     .subtract(2, "d")
@@ -208,6 +209,18 @@ function getDocs(auth) {
 
             limiter.removeTokens(1, function() {
                 const sitUrlEncoded = encodeURIComponent(site);
+                let jsonArr = [];
+                let errArr = [];
+                let fields = [
+                    "URL",
+                    "keys",
+                    "clicks",
+                    "impressions",
+                    "ctr",
+                    "position",
+                    "startDate",
+                    "endDate"
+                ];
 
                 const query = {
                     auth: auth,
@@ -221,6 +234,7 @@ function getDocs(auth) {
                         aggregationType: "byPage"
                     }
                 };
+
                 webmasters.searchanalytics.query(query, function(
                     err,
                     response
@@ -234,10 +248,67 @@ function getDocs(auth) {
 
                         if (rows === undefined) {
                             console.log(
-                                `Rows are undefined for the site: ${site}`
+                                `Rows are undefined for the site: ${site}. Consider removing from GSC`
+                            );
+                            errArr.push({
+                                undefinedKey: site,
+                                startDate: argv.startDate,
+                                endDate: argv.endDate
+                            });
+                            fs.writeFile(
+                                "./saves/error_log.txt",
+                                "Undefined key for site: " +
+                                    errArr[0].undefinedKey +
+                                    " | Consider removing from GSC. \r\n",
+                                { flag: "a+" },
+                                function(err) {
+                                    if (err) {
+                                        console.log(
+                                            "Error not logged for",
+                                            site,
+                                            ": ",
+                                            err
+                                        );
+                                    } else {
+                                        console.log("Error Logged for ", site);
+                                    }
+                                }
                             );
                         } else {
-                            // console.log(`Keys: ${JSON.stringify(rows).length}`)
+                            for (let i = 0, l = rows.length; i < l; i++) {
+                                let values = rows[i];
+
+                                jsonArr.push({
+                                    URL: values.keys[1],
+                                    keys: values.keys[0],
+                                    clicks: values.clicks,
+                                    impressions: values.impressions,
+                                    ctr: values.ctr,
+                                    position: values.position,
+                                    startDate: argv.startDate,
+                                    endDate: argv.endDate
+                                });
+                            }
+
+                            let result = json2csv({
+                                data: jsonArr,
+                                fields: fields
+                            });
+
+                            fs.writeFile(
+                                "./saves/" + filename,
+                                result,
+                                { flag: "wx" },
+                                function(err) {
+                                    if (err) {
+                                        console.log("File not saved: ", err);
+                                    } else {
+                                        console.log(
+                                            "File saved: " + filename + ""
+                                        );
+                                    }
+                                }
+                            );
                         }
                     }
                 });
