@@ -21,7 +21,7 @@
         "nodejs"
     ],
     "author": "Mike Duran-Mitchell",
-    "license": "GPL-3.0",
+    "license": "MIT",
     "bugs": {
         "url": "https://github.com/duranmitchell/google-search-console-api-for-seos/issues"
     },
